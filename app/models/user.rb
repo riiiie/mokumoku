@@ -13,14 +13,15 @@ class User < ApplicationRecord
   has_many :user_notification_timings, dependent: :destroy
   has_many :notification_timings, through: :user_notification_timings
   has_one_attached :avatar
-  # 誰かをフォローする
-  has_many :relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
-  # 誰かにフォローされる
-  has_many :reverse_of_relationships, class_name: "Relationship", foreign_key: "follow_id", dependent: :destroy
-  # 誰かをフォローした人
-  has_many :followers, through: :reverse_of_relationships, source: :follower
-  # 誰かにフォローされた人
-  has_many :followings, through: :relationships, source: :follow
+  # relationshipsは、自分がフォローしたり、アンフォローしたりする
+  has_many :relationships, class_name: "Relationship", foreign_key: "follow_id", dependent: :destroy
+  # relationshipsを通して、自分がフォローした一覧を表示
+  has_many :followings, through: :relationships, source: :follower
+
+  # reverse_of_relationshipsは、相手がフォローしたり、アンフォローしたりする
+  has_many :reverse_of_relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
+  # reverse_of_relationshipsを通して、自分がフォローされた一覧を表示
+  has_many :followers, through: :reverse_of_relationships, source: :follow
 
 
   validates :password, length: { minimum: 3 }, if: -> { new_record? || changes[:crypted_password] }
@@ -88,12 +89,12 @@ class User < ApplicationRecord
 
   # フォローしたときの処理
   def follow(user_id)
-    relationships.create(follow_id: user.id)
+    relationships.create(follower_id: user_id)
   end
 
   # フォローを外すときの処理
   def unfollow(user_id)
-    relationships.find_by(follow_id: user.id).destroy
+    relationships.find_by(follower_id: user_id).destroy
   end
 
   # フォローしているか判定
