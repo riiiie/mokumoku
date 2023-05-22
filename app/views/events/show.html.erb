@@ -57,7 +57,11 @@
         <div class="card-body">
           <div class="d-flex align-items-center gap-3 mb-3">
             <%= image_tag @event.user.decorate.avatar, class: 'rounded-circle avatar-lg' %>
-            <%= @event.user.name %>
+            <% if current_user == @event.user %>
+              <%= link_to @event.user.name, mypage_profile_path %>
+            <% else %>
+              <%= link_to @event.user.name, profile_path(@event.user) %>
+            <% end %>
           </div>
           <div class="p-3 bg-light">
             イベント数

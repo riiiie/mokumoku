@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_19_072358) do
+ActiveRecord::Schema.define(version: 2023_05_21_103955) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -109,6 +109,15 @@ ActiveRecord::Schema.define(version: 2022_01_19_072358) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "relationships", force: :cascade do |t|
+    t.integer "follower_id", null: false
+    t.integer "follow_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["follow_id"], name: "index_relationships_on_follow_id"
+    t.index ["follower_id", "follow_id"], name: "index_relationships_on_follower_id_and_follow_id", unique: true
+  end
+
   create_table "user_notification_timings", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "notification_timing_id", null: false
@@ -135,6 +144,8 @@ ActiveRecord::Schema.define(version: 2022_01_19_072358) do
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "profile"
+    t.string "hobby"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
